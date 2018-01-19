@@ -104,7 +104,7 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                     int maxDiLength = String.valueOf(mMaxNum).indexOf(".");//最大数的小数点位置
                     if (s.toString().length() - diLength > String.valueOf(mMaxNum).length() - maxDiLength) {
                         //设置删除的无用小数位，用原来的长度，减去(原来保留的小数位 减去 最大值保留的小数位)
-//                        setText(s.subSequence(0, (s.toString().length() - ((s.toString().length() - diLength) - (String.valueOf(mMaxNum).length() - maxDiLength)))));
+                        //setText(s.subSequence(0, (s.toString().length() - ((s.toString().length() - diLength) - (String.valueOf(mMaxNum).length() - maxDiLength)))));
                         setText(s.subSequence(0, (diLength + String.valueOf(mMaxNum).length() - maxDiLength)));
                         //因为这次得到的s还是更改前的s值，所以设置光标位置还是用原来截取到位置
                         setSelection((diLength + String.valueOf(mMaxNum).length() - maxDiLength));
