@@ -1,5 +1,5 @@
 # MaxNumEditText
-     ```
+```
      /**
      * 设置保留位数，并返回数值
      *
@@ -15,4 +15,24 @@
      * @param iCall  回调输出值
      */
     public void setModule(double maxNum, ICall iCall)
+```
+
+#To get a Git project into your build
+1. Add it in your root build.gradle at the end of repositories:  
+
+    ```
+        allprojects {
+        		repositories {
+        			...
+        			maven { url 'https://jitpack.io' }
+        		}
+        	}
+    ```
+
+2. Add the dependency
+
+    ```
+        dependencies {
+	        compile 'com.github.Thor-jelly:MaxNumEditText:v1.0'
+	}
     ```
