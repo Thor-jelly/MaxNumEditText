@@ -1,4 +1,7 @@
 # MaxNumEditText
+> 提交代码失败：更改gradle中apply plugin: 'com.android.application'为apply plugin: 'com.android.library'
+删除applicationId "com.dongdongwu.maxnumet"，依赖成功
+
 ```
      /**
      * 设置保留位数，并返回数值
@@ -33,6 +36,6 @@
 
     ```
         dependencies {
-	        compile 'com.github.Thor-jelly:MaxNumEditText:v1.0'
+	        compile 'com.github.Thor-jelly:MaxNumEditText:v1.0.1'
 	}
     ```
