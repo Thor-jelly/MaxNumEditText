@@ -34,6 +34,6 @@
 
     ```
         dependencies {
-	        compile 'com.github.Thor-jelly:MaxNumEditText:v1.0.1'
+	        compile 'com.github.Thor-jelly:MaxNumEditText:v1.0.2'
 	}
     ```
