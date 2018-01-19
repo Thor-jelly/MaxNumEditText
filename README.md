@@ -1,6 +1,4 @@
 # MaxNumEditText
-> 提交代码失败：更改gradle中apply plugin: 'com.android.application'为apply plugin: 'com.android.library'
-删除applicationId "com.dongdongwu.maxnumet"，依赖成功
 
 ```
      /**
