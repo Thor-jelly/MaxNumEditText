@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MaxNumEditText.iml" filepath="$PROJECT_DIR$/MaxNumEditText.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/maxnumet/maxnumet.iml" filepath="$PROJECT_DIR$/maxnumet/maxnumet.iml" />
     </modules>
   </component>

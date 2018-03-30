@@ -1,1 +1,1 @@
-include ':maxnumet'
+include ':maxnumet', ':app'
