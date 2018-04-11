@@ -5,10 +5,10 @@ android {
 
     defaultConfig {
 //        applicationId "com.dongdongwu.maxnumet"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.4"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
