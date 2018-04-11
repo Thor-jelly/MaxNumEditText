@@ -8,6 +8,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+
 /**
  * 类描述： 必须调用这个方法setModule，自定义保留位数edittext<br/>
  * 创建人：吴冬冬<br/>
@@ -232,6 +234,12 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                      */
                     if (ss.matches("(0.*)|(.*\\..*)")) {
                         removeTextChangedListener(this);
+                        //如果原来就含有小数直接设置为整数
+                        if (oldNumSb.toString().matches(".*\\..*")) {
+                            String format = getDoubleDecimalFormat(oldNumSb.toString());
+                            oldNumSb.setLength(0);
+                            oldNumSb.append(format);
+                        }
                         setText(oldNumSb.toString());
                         addTextChangedListener(this);
                         setSelection(oldNumSb.toString().length());
@@ -300,5 +308,11 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
 
             }
         };
+    }
+
+    private String getDoubleDecimalFormat(final String number) {
+        double doule = Double.valueOf(number);
+        DecimalFormat format = new DecimalFormat("#.#####");
+        return format.format(doule);
     }
 }
