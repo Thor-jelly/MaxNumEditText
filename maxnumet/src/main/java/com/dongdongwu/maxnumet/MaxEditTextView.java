@@ -198,7 +198,7 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "--->> " + s);
+                    Log.d(TAG, "--->>" + s);
                 }
                 if (mICall == null) {
                     //没有回调就直接返回
@@ -253,11 +253,11 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                      */
                     if (ss.contains(".")) {
                         //如果直接输入.变成0.样式
-                        if (s.toString().matches("\\..*")) {
+                        if (s.toString().matches("\\.")) {
                             removeTextChangedListener(this);
-                            setText("0." + oldNumSb.toString());
+                            setText("0.");
                             addTextChangedListener(this);
-                            setSelection(2 + oldNumSb.toString().length());
+                            setSelection(2);
                             return;
                         }
 
@@ -300,7 +300,12 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                     }
                     return;
                 }
-                mICall.Call(ss);
+                if (ss.startsWith(".")) {
+                    mICall.Call("0"+ss);
+                } else {
+                    mICall.Call(ss);
+                }
+
             }
 
             @Override
