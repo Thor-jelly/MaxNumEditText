@@ -7,6 +7,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import java.text.DecimalFormat;
 
@@ -27,6 +28,11 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
      * 最大数值
      */
     private double mMaxNum = MAX_NUM3;
+
+    /**
+     * 是否需要没有焦点的时候也回调textWatch，如没有焦点的时候 setText是不走TextWatch方法的
+     */
+    private boolean mIsHasAllTextWatch = false;
 
     public MaxEditTextView(Context context) {
         super(context);
@@ -55,6 +61,17 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
      * @param iCall  回调输出值
      */
     public void setModule(int module, ICall iCall) {
+        setModule(module, false, iCall);
+    }
+
+    /**
+     * 设置保留位数，并返回数值
+     *
+     * @param module            (0),(1),(2),(3)(保留0--3位小数，数值小于一万)
+     * @param isHasAllTextWatch 是否需要没有焦点的时候也回调textWatch，如没有焦点的时候 setText是不走TextWatch方法的
+     * @param iCall             回调输出值
+     */
+    public void setModule(int module, boolean isHasAllTextWatch, ICall iCall) {
         switch (module) {
             case 3://保留三位小数
                 mMaxNum = MAX_NUM3;
@@ -76,6 +93,7 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
             Log.d(TAG, "最大值--保留位数->> " + module);
         }
         mICall = iCall;
+        mIsHasAllTextWatch = isHasAllTextWatch;
         initEt();
     }
 
@@ -87,8 +105,20 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
      * @param iCall  回调输出值
      */
     public void setModule(double maxNum, ICall iCall) {
+        setModule(maxNum, false, iCall);
+    }
+
+    /**
+     * 设置保留位数，并返回数值
+     *
+     * @param maxNum            输入最大值
+     * @param isHasAllTextWatch 是否需要没有焦点的时候也回调textWatch，如没有焦点的时候 setText是不走TextWatch方法的
+     * @param iCall             回调输出值
+     */
+    public void setModule(double maxNum, boolean isHasAllTextWatch, ICall iCall) {
         mMaxNum = maxNum;
         mICall = iCall;
+        mIsHasAllTextWatch = isHasAllTextWatch;
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "最大值--->> " + mMaxNum);
         }
@@ -100,9 +130,25 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
          * 改变前数据
          */
         StringBuilder mOldSb = new StringBuilder();
-        TextWatcher etTextWatch = getEtTextWatch(mOldSb);
-        addTextChangedListener(etTextWatch);
+        final TextWatcher etTextWatch = getEtTextWatch(mOldSb);
+
+        if (mIsHasAllTextWatch) {
+            removeTextChangedListener(etTextWatch);
+            addTextChangedListener(etTextWatch);
+        } else {
+            setOnFocusChangeListener(new OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        addTextChangedListener(etTextWatch);
+                    } else {
+                        removeTextChangedListener(etTextWatch);
+                    }
+                }
+            });
+        }
     }
+
 
 //    @Override
 //    protected void onTextChanged(CharSequence s, int start, int lengthBefore, int lengthAfter) {
@@ -204,6 +250,7 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                     //没有回调就直接返回
                     return;
                 }
+
                 boolean isDot = (mMaxNum - (long) mMaxNum) != 0;//是否是小数
 
                 //数前多0判断
@@ -234,19 +281,32 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                      */
                     if (ss.matches("(0.*)|(.*\\..*)")) {
                         removeTextChangedListener(this);
-                        //如果原来就含有小数直接设置为整数
-                        if (oldNumSb.toString().matches(".*\\..*")) {
-                            String format = getDoubleDecimalFormat(oldNumSb.toString());
+                        String ssFormat = getDoubleDecimalFormat(ss);
+
+                        //如果当前整数在设置的时候就有小数点并且小数点后都为0
+                        if (ssFormat.matches("[^.]+")) {
                             oldNumSb.setLength(0);
-                            oldNumSb.append(format);
+                            if (isExceedMaxEditNum(this, Double.parseDouble(ssFormat), mMaxNum)) {//判断是否超过最大值
+                                oldNumSb.append(((long) mMaxNum) + "");
+                            } else {
+                                oldNumSb.append(ssFormat);
+                            }
+                        } else if (oldNumSb.toString().matches(".*\\..*")) {
+                            //如果原来就含有小数直接设置为整数
+                            String oldStr = oldNumSb.toString();
+                            oldNumSb.setLength(0);
+                            int dotIndex = oldStr.indexOf(".");
+                            if (dotIndex == 0) {
+                                oldNumSb.append("1");
+                            } else {
+                                oldNumSb.append(oldStr.substring(0, dotIndex));
+                            }
                         }
                         setText(oldNumSb.toString());
                         addTextChangedListener(this);
                         setSelection(oldNumSb.toString().length());
                         return;
                     }
-
-
                 } else {
                     /*
                         如果是小数
@@ -292,20 +352,31 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                 if (isExceedMaxEditNum(this, jinPrice, mMaxNum)) {//判断是否超过最大值
                     if (BuildConfig.DEBUG) {
                         Log.d(TAG, "isExceedMaxEditNum--->>超过最大值");
-                        if (!isDot) {
-                            mICall.Call(((long) mMaxNum) + "");
-                        } else {
-                            mICall.Call(mMaxNum + "");
+                    }
+                    if (!isDot) {
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "isExceedMaxEditNum--->>" + ((long) mMaxNum));
                         }
+                        mICall.Call(((long) mMaxNum) + "");
+                    } else {
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "isExceedMaxEditNum--->>" + mMaxNum);
+                        }
+                        mICall.Call(mMaxNum + "");
                     }
                     return;
                 }
                 if (ss.startsWith(".")) {
-                    mICall.Call("0"+ss);
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "返回数据--->0." + ss);
+                    }
+                    mICall.Call("0" + ss);
                 } else {
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "返回数据--->" + ss);
+                    }
                     mICall.Call(ss);
                 }
-
             }
 
             @Override
