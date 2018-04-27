@@ -259,6 +259,18 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                     setText(oldNumSb.toString());
                     addTextChangedListener(this);
                     setSelection(oldNumSb.toString().length());
+
+                    if (oldNumSb.toString().startsWith(".")) {
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
+                        }
+                        mICall.Call("0" + oldNumSb.toString());
+                    } else {
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "返回数据--->" + oldNumSb.toString());
+                        }
+                        mICall.Call(oldNumSb.toString());
+                    }
                     return;
                 }
 
@@ -269,6 +281,18 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                         setText(oldNumSb.toString());
                         addTextChangedListener(this);
                         setSelection(oldNumSb.toString().length());
+
+                        if (oldNumSb.toString().startsWith(".")) {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
+                            }
+                            mICall.Call("0" + oldNumSb.toString());
+                        } else {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "返回数据--->" + oldNumSb.toString());
+                            }
+                            mICall.Call(oldNumSb.toString());
+                        }
                         return;
                     }
                 }
@@ -279,7 +303,7 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                         整数
                         数前0判断 | 小数点删除
                      */
-                    if (ss.matches("(0.*)|(.*\\..*)")) {
+                    if (ss.matches("(0.+)|(.*\\..*)")) {
                         removeTextChangedListener(this);
                         String ssFormat = getDoubleDecimalFormat(ss);
 
@@ -305,6 +329,18 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                         setText(oldNumSb.toString());
                         addTextChangedListener(this);
                         setSelection(oldNumSb.toString().length());
+
+                        if (oldNumSb.toString().startsWith(".")) {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
+                            }
+                            mICall.Call("0" + oldNumSb.toString());
+                        } else {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "返回数据--->" + oldNumSb.toString());
+                            }
+                            mICall.Call(oldNumSb.toString());
+                        }
                         return;
                     }
                 } else {
@@ -318,6 +354,11 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                             setText("0.");
                             addTextChangedListener(this);
                             setSelection(2);
+
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "返回数据--->0.");
+                            }
+                            mICall.Call("0.");
                             return;
                         }
 
@@ -327,6 +368,18 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                             setText(oldNumSb.toString());
                             addTextChangedListener(this);
                             setSelection(oldNumSb.toString().length());
+
+                            if (oldNumSb.toString().startsWith(".")) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
+                                }
+                                mICall.Call("0" + oldNumSb.toString());
+                            } else {
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "返回数据--->" + oldNumSb.toString());
+                                }
+                                mICall.Call(oldNumSb.toString());
+                            }
                             return;
                         }
 
@@ -337,6 +390,18 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
                             setText(oldNumSb.toString());
                             addTextChangedListener(this);
                             setSelection(oldNumSb.toString().length());
+
+                            if (oldNumSb.toString().startsWith(".")) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
+                                }
+                                mICall.Call("0" + oldNumSb.toString());
+                            } else {
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "返回数据--->" + oldNumSb.toString());
+                                }
+                                mICall.Call(oldNumSb.toString());
+                            }
                             return;
                         }
                     }
@@ -387,7 +452,17 @@ public class MaxEditTextView extends android.support.v7.widget.AppCompatEditText
     }
 
     private String getDoubleDecimalFormat(final String number) {
-        double doule = Double.valueOf(number);
+        if (number.equals(".")) {
+            return number;
+        }
+        double doule = 0;
+        try {
+            if (!number.equals("")) {
+                doule = Double.valueOf(number);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
         DecimalFormat format = new DecimalFormat("#.#####");
         return format.format(doule);
     }
