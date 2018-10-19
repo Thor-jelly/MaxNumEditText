@@ -1,10 +1,10 @@
 package com.dongdongwu.app;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
-import com.dongdongwu.maxnumet.MaxEditTextView;
+import com.jelly.thor.maxnumberet.MaxEditTextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mMaxEditTextView = (MaxEditTextView) findViewById(R.id.et);
         mMaxEditTextView.setModule(99.99D, new MaxEditTextView.ICall() {
             @Override
