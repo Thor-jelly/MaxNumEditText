@@ -2,6 +2,8 @@ package com.jelly.thor.maxnumberet;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
+
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -16,7 +18,7 @@ import java.text.DecimalFormat;
  * 创建人：吴冬冬<br/>
  * 创建时间：2017/8/31 17:38 <br/>
  */
-public class MaxEditTextView extends androidx.appcompat.widget.AppCompatEditText {
+public class MaxEditTextView extends AppCompatEditText {
     private static final String TAG = "MaxEditTextView";
 
     private double MAX_NUM0 = 9999D;
