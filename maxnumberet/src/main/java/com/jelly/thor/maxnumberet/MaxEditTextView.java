@@ -1,9 +1,6 @@
 package com.jelly.thor.maxnumberet;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatEditText;
-
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -12,6 +9,9 @@ import android.util.Log;
 import android.view.View;
 
 import java.text.DecimalFormat;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 
 /**
  * 类描述： 必须调用这个方法setModule，自定义保留位数edittext<br/>
