@@ -1,24 +1,32 @@
 # MaxNumEditText
 > 暂时只能在xml添加`android:inputType="numberDecimal"`属性使其输入数字，因为我在其构造方法中添加`setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);`没有效果!有知道怎么改的可以发我QQ邮箱：745661590@qq.com
 
-[![GitHub release](https://img.shields.io/badge/release-v1.0.8-green.svg)](https://github.com/Thor-jelly/MaxNumEditText/releases)
+[![GitHub release](https://img.shields.io/badge/release-v1.1.0-green.svg)](https://github.com/Thor-jelly/MaxNumEditText/releases)
 
 ```
      /**
-     * 设置保留位数，并返回数值
-     *
-     * @param module 0,1,2,3(保留0--3位小数，数值小于一万)
-     * @param iCall  回调输出值
-     */
-    public void setModule(int module, ICall iCall)
-    
-    /**
-     * 设置最大数值，并返回数值,如果最大值为整数则不可以输小数
-     *
-     * @param maxNum 输入最大值
-     * @param iCall  回调输出值
-     */
-    public void setModule(double maxNum, ICall iCall)
+          * 设置是否显示日志
+          */
+         public void setDebug(boolean isDebug) 
+     
+         /**
+          * 设置最大数值，并返回数值,如果最大值为整数则不可以输小数
+          *
+          * @param dot    保留小数位数
+          * @param maxNum 输入最大值
+          * @param iCall  回调输出值
+          */
+         public void setModule(@IntRange(from = 0) int dot, double maxNum, ICall iCall) 
+     
+         /**
+          * 设置保留位数，并返回数值
+          *
+          * @param dot               保留小数位数
+          * @param maxNum            输入最大值
+          * @param isHasAllTextWatch 是否需要没有焦点的时候也回调textWatch，false:如没有焦点的时候 setText是不走TextWatch方法的
+          * @param iCall             回调输出值
+          */
+         public void setModule(@IntRange(from = 0) int dot, double maxNum, boolean isHasAllTextWatch, ICall iCall) 
 ```
 
 #To get a Git project into your build
@@ -37,6 +45,6 @@
 
     ```
         dependencies {
-	        compile 'com.github.Thor-jelly:MaxNumEditText:v最新版本'
+	        compile 'com.github.Thor-jelly:MaxNumEditText:最新版本'
 	}
     ```
