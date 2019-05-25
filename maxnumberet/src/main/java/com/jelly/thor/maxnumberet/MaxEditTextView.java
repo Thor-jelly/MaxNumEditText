@@ -55,10 +55,16 @@ public class MaxEditTextView extends AppCompatEditText {
     }
 
     public interface ICall {
-        void Call(String s);
+        void call(String s);
     }
 
     private ICall mICall;
+
+    public interface FocusChangeListenerCallback {
+        void onFocusChange(View v, boolean hasFocus);
+    }
+
+    private FocusChangeListenerCallback mFocusChangeListenerCallback;
 
     /**
      * 设置是否显示日志
@@ -97,6 +103,27 @@ public class MaxEditTextView extends AppCompatEditText {
         initEt();
     }
 
+    /**
+     * 更改最大值和保留位数
+     *
+     * @param dot    保留小数位数
+     * @param maxNum 输入最大值
+     */
+    public void changMaxNumber(@IntRange(from = 0) int dot, double maxNum) {
+        mDot = dot;
+        mMaxNum = maxNum;
+        if (mIsDebug) {
+            Log.d(TAG, "改变后的最大值--->> " + mMaxNum + " 保留小数：" + mDot);
+        }
+    }
+
+    /**
+     * 添加焦点监听，外面调用系统的不起作用
+     */
+    public void setOnFocusChangeListener(FocusChangeListenerCallback focusChangeListenerCallback) {
+        mFocusChangeListenerCallback = focusChangeListenerCallback;
+    }
+
     private void initEt() {
         /*
           改变前数据
@@ -107,10 +134,21 @@ public class MaxEditTextView extends AppCompatEditText {
         if (mIsHasAllTextWatch) {
             removeTextChangedListener(etTextWatch);
             addTextChangedListener(etTextWatch);
+            setOnFocusChangeListener(new OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (mFocusChangeListenerCallback != null) {
+                        mFocusChangeListenerCallback.onFocusChange(v, hasFocus);
+                    }
+                }
+            });
         } else {
             setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
+                    if (mFocusChangeListenerCallback != null) {
+                        mFocusChangeListenerCallback.onFocusChange(v, hasFocus);
+                    }
                     if (hasFocus) {
                         addTextChangedListener(etTextWatch);
                     } else {
@@ -152,12 +190,12 @@ public class MaxEditTextView extends AppCompatEditText {
                         if (mIsDebug) {
                             Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
                         }
-                        mICall.Call("0" + oldNumSb.toString());
+                        mICall.call("0" + oldNumSb.toString());
                     } else {
                         if (mIsDebug) {
                             Log.d(TAG, "返回数据--->" + oldNumSb.toString());
                         }
-                        mICall.Call(oldNumSb.toString());
+                        mICall.call(oldNumSb.toString());
                     }
                     return;
                 }
@@ -174,12 +212,12 @@ public class MaxEditTextView extends AppCompatEditText {
                             if (mIsDebug) {
                                 Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
                             }
-                            mICall.Call("0" + oldNumSb.toString());
+                            mICall.call("0" + oldNumSb.toString());
                         } else {
                             if (mIsDebug) {
                                 Log.d(TAG, "返回数据--->" + oldNumSb.toString());
                             }
-                            mICall.Call(oldNumSb.toString());
+                            mICall.call(oldNumSb.toString());
                         }
                         return;
                     }
@@ -224,12 +262,12 @@ public class MaxEditTextView extends AppCompatEditText {
                             if (mIsDebug) {
                                 Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
                             }
-                            mICall.Call("0" + oldNumSb.toString());
+                            mICall.call("0" + oldNumSb.toString());
                         } else {
                             if (mIsDebug) {
                                 Log.d(TAG, "返回数据--->" + oldNumSb.toString());
                             }
-                            mICall.Call(oldNumSb.toString());
+                            mICall.call(oldNumSb.toString());
                         }
                         return;
                     }
@@ -248,7 +286,7 @@ public class MaxEditTextView extends AppCompatEditText {
                             if (mIsDebug) {
                                 Log.d(TAG, "返回数据--->0.");
                             }
-                            mICall.Call("0.");
+                            mICall.call("0.");
                             return;
                         }
 
@@ -263,12 +301,12 @@ public class MaxEditTextView extends AppCompatEditText {
                                 if (mIsDebug) {
                                     Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
                                 }
-                                mICall.Call("0" + oldNumSb.toString());
+                                mICall.call("0" + oldNumSb.toString());
                             } else {
                                 if (mIsDebug) {
                                     Log.d(TAG, "返回数据--->" + oldNumSb.toString());
                                 }
-                                mICall.Call(oldNumSb.toString());
+                                mICall.call(oldNumSb.toString());
                             }
                             return;
                         }
@@ -285,12 +323,12 @@ public class MaxEditTextView extends AppCompatEditText {
                                 if (mIsDebug) {
                                     Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
                                 }
-                                mICall.Call("0" + oldNumSb.toString());
+                                mICall.call("0" + oldNumSb.toString());
                             } else {
                                 if (mIsDebug) {
                                     Log.d(TAG, "返回数据--->" + oldNumSb.toString());
                                 }
-                                mICall.Call(oldNumSb.toString());
+                                mICall.call(oldNumSb.toString());
                             }
                             return;
                         }
@@ -319,7 +357,7 @@ public class MaxEditTextView extends AppCompatEditText {
                     addTextChangedListener(this);
                     setSelection(nowMaxStr.length());
 
-                    mICall.Call(nowMaxStr);
+                    mICall.call(nowMaxStr);
                     return;
                 }
 
@@ -328,12 +366,12 @@ public class MaxEditTextView extends AppCompatEditText {
                     if (mIsDebug) {
                         Log.d(TAG, "返回数据--->0." + ss);
                     }
-                    mICall.Call("0" + ss);
+                    mICall.call("0" + ss);
                 } else {
                     if (mIsDebug) {
                         Log.d(TAG, "返回数据--->" + ss);
                     }
-                    mICall.Call(ss);
+                    mICall.call(ss);
                 }
             }
 
