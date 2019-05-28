@@ -20,12 +20,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMaxEditTextView = (MaxEditTextView) findViewById(R.id.et);
-        mMaxEditTextView.setModule(3, 100D, true, new MaxEditTextView.ICall() {
+        mMaxEditTextView.setModule(3, 10000D, true, new MaxEditTextView.ICall() {
             @Override
-            public void all(String s) {
+            public void call(String s) {
                 Log.d(TAG, "回调: " + s);
             }
         });
     }
 }
-c
