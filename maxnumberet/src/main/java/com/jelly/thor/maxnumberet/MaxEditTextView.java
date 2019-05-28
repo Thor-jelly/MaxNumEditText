@@ -203,7 +203,7 @@ public class MaxEditTextView extends AppCompatEditText {
                 }*/
 
                 //格式化数前0
-                if (ss.matches("^[-]*((0+\\d+)|(0{2,}\\.\\d+))$")) {
+                if (ss.matches("^[-]*((0+\\d+)|(0\\d\\.\\d*))$")) {
                     removeTextChangedListener(this);
                     String newSS = getDoubleDecimalFormat(ss);
                     oldNumSb.setLength(0);
@@ -449,8 +449,14 @@ public class MaxEditTextView extends AppCompatEditText {
      * 格式化小数
      */
     private String formatDouble(double number) {
-        String pattern = "#.#####";
-        DecimalFormat format = new DecimalFormat(pattern);
+        StringBuilder patternSb = new StringBuilder("#");
+        for (int i = 0; i < mDot; i++) {
+            if (i == 0) {
+                patternSb.append(".");
+            }
+            patternSb.append("#");
+        }
+        DecimalFormat format = new DecimalFormat(patternSb.toString());
         return format.format(number);
     }
 }
