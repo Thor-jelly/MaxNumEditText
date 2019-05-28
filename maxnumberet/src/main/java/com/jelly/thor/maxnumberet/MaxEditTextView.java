@@ -205,7 +205,7 @@ public class MaxEditTextView extends AppCompatEditText {
                 //格式化数前0
                 if (ss.matches("^[-]*((0+\\d+)|(0\\d\\.\\d*))$")) {
                     removeTextChangedListener(this);
-                    String newSS = getDoubleDecimalFormat(ss);
+                    String newSS = getDoubleDecimalFormat(ss, mDot);
                     oldNumSb.setLength(0);
                     oldNumSb.append(newSS);
                     setText(newSS);
@@ -219,58 +219,41 @@ public class MaxEditTextView extends AppCompatEditText {
                 }
 
                 //多个-判断或数字后添加-
-                if (ss.contains("-")) {
-                    if (s.toString().matches("(.+-.*)+")) {
-                        removeTextChangedListener(this);
-                        String toString = oldNumSb.toString();
-                        setText(toString);
-                        addTextChangedListener(this);
-                        setSelection(toString.length());
+                if (ss.matches("(.+-.*)+")) {
+                    removeTextChangedListener(this);
+                    String toString = oldNumSb.toString();
+                    setText(toString);
+                    addTextChangedListener(this);
+                    setSelection(toString.length());
 
-                        if (toString.startsWith(".")) {
-                            if (mIsDebug) {
-                                Log.d(TAG, "返回数据--->0." + toString);
-                            }
-                            mICall.call("0" + toString);
-                        } else {
-                            if (mIsDebug) {
-                                Log.d(TAG, "返回数据--->" + toString);
-                            }
-                            mICall.call(toString);
+                    if (toString.startsWith(".")) {
+                        if (mIsDebug) {
+                            Log.d(TAG, "返回数据--->0." + toString);
                         }
-                        return;
+                        mICall.call("0" + toString);
+                    } else {
+                        if (mIsDebug) {
+                            Log.d(TAG, "返回数据--->" + toString);
+                        }
+                        mICall.call(toString);
                     }
+                    return;
                 }
-
 
                 boolean isDot = mDot != 0;//是否是小数
                 if (!isDot) {
-                    /*
-                        整数
-                        数后.000判断 | 旧数小数点删除
-                     */
-                    //有小数点判断
-                    if (ss.matches("(.*\\..*)")) {
+                    //整数有小数点
+                    if (ss.matches(".*\\..*")) {
                         removeTextChangedListener(this);
-                        String ssFormat = getDoubleDecimalFormat(ss);
-
-                        if (ssFormat.matches("(\\d\\.0*$)*")) {
-                            //如果当前整数在设置的时候就有小数点并且小数点后都为0
+                        //有多个小数点返回原数值
+                        if (!ss.matches(".*\\..*\\..*")) {
+                            //如果只有一个点截取点前数据
+                            String ssFormat = getDoubleDecimalFormat(ss, 0);
                             oldNumSb.setLength(0);
                             if (isExceedMaxEditNum(this, Double.parseDouble(ssFormat), mMaxNum)) {//判断是否超过最大值
                                 oldNumSb.append((long) mMaxNum);
                             } else {
                                 oldNumSb.append(Long.parseLong(ssFormat));
-                            }
-                        } else if (oldNumSb.toString().matches(".*\\..*")) {
-                            //如果原来就含有小数直接设置为整数
-                            String oldStr = oldNumSb.toString();
-                            oldNumSb.setLength(0);
-                            int dotIndex = oldStr.indexOf(DOT_STR);
-                            if (dotIndex <= 0) {
-                                oldNumSb.append("");
-                            } else {
-                                oldNumSb.append(oldStr.substring(0, dotIndex));
                             }
                         }
                         String toString = oldNumSb.toString();
@@ -297,7 +280,7 @@ public class MaxEditTextView extends AppCompatEditText {
                      */
                     if (ss.contains(".")) {
                         //如果直接输入.变成0.样式
-                        if (s.toString().matches("\\.")) {
+                        if (ss.matches("\\.")) {
                             removeTextChangedListener(this);
                             setText("0.");
                             addTextChangedListener(this);
@@ -311,7 +294,7 @@ public class MaxEditTextView extends AppCompatEditText {
                         }
 
                         //屏蔽多个.
-                        if (ss.matches("((\\.\\d+\\.)+)|((\\.){2,})")) {
+                        if (ss.matches(".*\\..*\\..*")) {
                             removeTextChangedListener(this);
                             String toString = oldNumSb.toString();
                             setText(toString);
@@ -332,6 +315,7 @@ public class MaxEditTextView extends AppCompatEditText {
                             return;
                         }
 
+                        //判断是否超过小数点位数
                         int diLength = ss.indexOf(DOT_STR);//输入框小数点位置
                         int maxDiLength = mDot + 1;//最大数的小数点位置
                         if (ss.length() - diLength > maxDiLength) {
@@ -373,7 +357,7 @@ public class MaxEditTextView extends AppCompatEditText {
                     if (mIsDebug) {
                         Log.d(TAG, "isExceedMaxEditNum--->>" + ((long) mMaxNum));
                     }
-                    String nowMaxStr = formatDouble(mMaxNum);
+                    String nowMaxStr = formatDouble(mMaxNum, mDot);
                     removeTextChangedListener(this);
                     setText(nowMaxStr);
                     addTextChangedListener(this);
@@ -428,7 +412,7 @@ public class MaxEditTextView extends AppCompatEditText {
     /**
      * 获取格式化的小数
      */
-    private String getDoubleDecimalFormat(String numberStr) {
+    private String getDoubleDecimalFormat(String numberStr, int dot) {
         if (numberStr.equals(".")) {
             numberStr = "0.0";
         }
@@ -442,13 +426,14 @@ public class MaxEditTextView extends AppCompatEditText {
                 Log.w(TAG, e.getMessage());
             }
         }
-        return formatDouble(number);
+
+        return formatDouble(number, dot);
     }
 
     /**
      * 格式化小数
      */
-    private String formatDouble(double number) {
+    private String formatDouble(double number, int dot) {
         StringBuilder patternSb = new StringBuilder("#");
         for (int i = 0; i < mDot; i++) {
             if (i == 0) {

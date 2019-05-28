@@ -1,5 +1,7 @@
 package com.dongdongwu.app;
 
+import android.util.Log;
+
 import org.junit.Test;
 
 import java.text.DecimalFormat;
@@ -15,8 +17,13 @@ public class ExampleUnitTest {
         //assertEquals(4, 2 + 2);
 
 //        double v = testDoubleParse("0.");
-        String v = getDoubleDecimalFormat("-.004000");
+//        String v = getDoubleDecimalFormat(".004000");
+        boolean v = test("1..1.1", ".*\\..*\\..*");
         System.out.println(v);
+    }
+
+    private boolean test(String ss, String rule) {
+        return ss.matches(rule);
     }
 
     private double testDoubleParse(String numberStr) {
@@ -41,7 +48,8 @@ public class ExampleUnitTest {
      * 格式化小数
      */
     private String formatDouble(double number) {
-        String pattern = "#.#####";
+//        String pattern = "#.#####";
+        String pattern = "#";
         DecimalFormat format = new DecimalFormat(pattern);
         return format.format(number);
     }
