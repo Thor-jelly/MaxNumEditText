@@ -435,7 +435,7 @@ public class MaxEditTextView extends AppCompatEditText {
      */
     private String formatDouble(double number, int dot) {
         StringBuilder patternSb = new StringBuilder("#");
-        for (int i = 0; i < mDot; i++) {
+        for (int i = 0; i < dot; i++) {
             if (i == 0) {
                 patternSb.append(".");
             }
