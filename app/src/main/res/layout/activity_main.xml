@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.dongdongwu.app.MainActivity">
 
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="#f00"
+        android:gravity="center"
+        android:text="我是改变最大值模式"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.jelly.thor.maxnumberet.MaxEditTextView
         android:id="@+id/et"
         android:layout_width="match_parent"

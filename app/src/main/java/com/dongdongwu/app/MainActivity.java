@@ -15,15 +15,30 @@ public class MainActivity extends AppCompatActivity {
 
     private MaxEditTextView mMaxEditTextView;
 
+    private int model = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMaxEditTextView = (MaxEditTextView) findViewById(R.id.et);
-        mMaxEditTextView.setModule(3, 10000D, true, new MaxEditTextView.ICall() {
+        mMaxEditTextView.setModule(3, 99999.99D, true, new MaxEditTextView.ICall() {
             @Override
             public void call(String s) {
                 Log.d(TAG, "回调: " + s);
+            }
+        });
+
+        View tv = findViewById(R.id.tv);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                model++;
+                if (model % 2 == 0) {
+                    mMaxEditTextView.changMaxNumber(3, 99999.99D);
+                } else {
+                    mMaxEditTextView.changMaxNumber(0, 99999);
+                }
             }
         });
     }

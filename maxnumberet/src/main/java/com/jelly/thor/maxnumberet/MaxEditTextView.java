@@ -115,6 +115,17 @@ public class MaxEditTextView extends AppCompatEditText {
         if (mIsDebug) {
             Log.d(TAG, "改变后的最大值--->> " + mMaxNum + " 保留小数：" + mDot);
         }
+        String nowTextStr = getText().toString();
+        setText(nowTextStr);
+        double nowD = 0;
+        try {
+            nowD = Double.parseDouble(nowTextStr);
+        } catch (NumberFormatException e) {
+            nowD = 0;
+        }
+        if (nowD <= maxNum) {
+            setSelection(getText().toString().length());
+        }
     }
 
     /**
