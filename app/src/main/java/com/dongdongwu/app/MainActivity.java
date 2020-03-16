@@ -22,12 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMaxEditTextView = (MaxEditTextView) findViewById(R.id.et);
-        mMaxEditTextView.setModule(3, 99999.99D, true, new MaxEditTextView.ICall() {
+        mMaxEditTextView.setModule(3, 999_999_999.999D, true, new MaxEditTextView.ICall() {
             @Override
             public void call(String s) {
                 Log.d(TAG, "回调: " + s);
             }
         });
+        mMaxEditTextView.setShowEnd0(true);
 
         View tv = findViewById(R.id.tv);
         tv.setOnClickListener(new View.OnClickListener() {

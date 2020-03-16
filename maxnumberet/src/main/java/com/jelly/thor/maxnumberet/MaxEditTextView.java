@@ -26,7 +26,10 @@ public class MaxEditTextView extends AppCompatEditText {
      * 是否是debug模式
      */
     private boolean mIsDebug = false;
-
+    /**
+     * 小数时如果后面为0是否显示
+     */
+    private boolean mIsShowEnd0 = false;
     /**
      * 最大数值
      */
@@ -74,6 +77,13 @@ public class MaxEditTextView extends AppCompatEditText {
     }
 
     /**
+     * 设置是否显示小数后的0
+     */
+    public void setShowEnd0(boolean showEnd0) {
+        mIsShowEnd0 = showEnd0;
+    }
+
+    /**
      * 设置最大数值，并返回数值,如果最大值为整数则不可以输小数
      *
      * @param dot    保留小数位数
@@ -115,9 +125,13 @@ public class MaxEditTextView extends AppCompatEditText {
         if (mIsDebug) {
             Log.d(TAG, "改变后的最大值--->> " + mMaxNum + " 保留小数：" + mDot);
         }
-        String nowTextStr = getText().toString();
+        Editable text = getText();
+        if (text == null) {
+            return;
+        }
+        String nowTextStr = text.toString();
         setText(nowTextStr);
-        double nowD = 0;
+        double nowD;
         try {
             nowD = Double.parseDouble(nowTextStr);
         } catch (NumberFormatException e) {
@@ -191,41 +205,16 @@ public class MaxEditTextView extends AppCompatEditText {
 
                 String ss = s.toString();
 
-                //数前多0判断
-                /*if (ss.matches("^[-]*00.*")) {
-                    removeTextChangedListener(this);
-                    setText(oldNumSb.toString());
-                    addTextChangedListener(this);
-                    setSelection(oldNumSb.toString().length());
-
-                    if (oldNumSb.toString().startsWith(".")) {
-                        //如果原来是.xxx这种数字返回数据变为0.xxx这种形式
-                        if (mIsDebug) {
-                            Log.d(TAG, "返回数据--->0." + oldNumSb.toString());
-                        }
-                        mICall.call("0" + oldNumSb.toString());
-                    } else {
-                        if (mIsDebug) {
-                            Log.d(TAG, "返回数据--->" + oldNumSb.toString());
-                        }
-                        mICall.call(oldNumSb.toString());
-                    }
-                    return;
-                }*/
-
                 //格式化数前0
                 if (ss.matches("^[-]*((0+\\d+)|(0\\d\\.\\d*))$")) {
                     removeTextChangedListener(this);
-                    String newSS = getDoubleDecimalFormat(ss, mDot);
+                    String newSS = getDoubleDecimalFormat(ss, mDot, false);
                     oldNumSb.setLength(0);
                     oldNumSb.append(newSS);
                     setText(newSS);
                     setSelection(newSS.length());
                     addTextChangedListener(this);
-                    if (mIsDebug) {
-                        Log.d(TAG, "返回数据--->" + newSS);
-                    }
-                    mICall.call(newSS);
+                    setCallbackData(newSS);
                     return;
                 }
 
@@ -237,17 +226,8 @@ public class MaxEditTextView extends AppCompatEditText {
                     addTextChangedListener(this);
                     setSelection(toString.length());
 
-                    if (toString.startsWith(".")) {
-                        if (mIsDebug) {
-                            Log.d(TAG, "返回数据--->0." + toString);
-                        }
-                        mICall.call("0" + toString);
-                    } else {
-                        if (mIsDebug) {
-                            Log.d(TAG, "返回数据--->" + toString);
-                        }
-                        mICall.call(toString);
-                    }
+                    //设置回调数据
+                    setCallbackData(toString);
                     return;
                 }
 
@@ -259,9 +239,9 @@ public class MaxEditTextView extends AppCompatEditText {
                         //有多个小数点返回原数值
                         if (!ss.matches(".*\\..*\\..*")) {
                             //如果只有一个点截取点前数据
-                            String ssFormat = getDoubleDecimalFormat(ss, 0);
+                            String ssFormat = getDoubleDecimalFormat(ss, 0, mIsShowEnd0);
                             oldNumSb.setLength(0);
-                            if (isExceedMaxEditNum(this, Double.parseDouble(ssFormat), mMaxNum)) {//判断是否超过最大值
+                            if (isExceedMaxEditNum(Double.parseDouble(ssFormat), mMaxNum)) {//判断是否超过最大值
                                 oldNumSb.append((long) mMaxNum);
                             } else {
                                 oldNumSb.append(Long.parseLong(ssFormat));
@@ -272,17 +252,8 @@ public class MaxEditTextView extends AppCompatEditText {
                         addTextChangedListener(this);
                         setSelection(toString.length());
 
-                        if (toString.startsWith(DOT_STR)) {
-                            if (mIsDebug) {
-                                Log.d(TAG, "返回数据--->0." + toString);
-                            }
-                            mICall.call("0" + toString);
-                        } else {
-                            if (mIsDebug) {
-                                Log.d(TAG, "返回数据--->" + toString);
-                            }
-                            mICall.call(toString);
-                        }
+                        //设置回调数据
+                        setCallbackData(toString);
                         return;
                     }
                 } else {
@@ -297,10 +268,8 @@ public class MaxEditTextView extends AppCompatEditText {
                             addTextChangedListener(this);
                             setSelection(2);
 
-                            if (mIsDebug) {
-                                Log.d(TAG, "返回数据--->0.");
-                            }
-                            mICall.call("0.");
+                            //设置回调数据
+                            setCallbackData("0.0");
                             return;
                         }
 
@@ -312,17 +281,8 @@ public class MaxEditTextView extends AppCompatEditText {
                             addTextChangedListener(this);
                             setSelection(toString.length());
 
-                            if (toString.startsWith(DOT_STR)) {
-                                if (mIsDebug) {
-                                    Log.d(TAG, "返回数据--->0." + toString);
-                                }
-                                mICall.call("0" + toString);
-                            } else {
-                                if (mIsDebug) {
-                                    Log.d(TAG, "返回数据--->" + toString);
-                                }
-                                mICall.call(toString);
-                            }
+                            //设置回调数据
+                            setCallbackData(toString);
                             return;
                         }
 
@@ -336,17 +296,8 @@ public class MaxEditTextView extends AppCompatEditText {
                             addTextChangedListener(this);
                             setSelection(toString.length());
 
-                            if (toString.startsWith(".")) {
-                                if (mIsDebug) {
-                                    Log.d(TAG, "返回数据--->0." + toString);
-                                }
-                                mICall.call("0" + toString);
-                            } else {
-                                if (mIsDebug) {
-                                    Log.d(TAG, "返回数据--->" + toString);
-                                }
-                                mICall.call(toString);
-                            }
+                            //设置回调数据
+                            setCallbackData(toString);
                             return;
                         }
                     }
@@ -361,14 +312,14 @@ public class MaxEditTextView extends AppCompatEditText {
                         Log.w(TAG, e.getMessage());
                     }
                 }
-                if (isExceedMaxEditNum(this, jinPrice, mMaxNum)) {//判断是否超过最大值
+                if (isExceedMaxEditNum(jinPrice, mMaxNum)) {//判断是否超过最大值
                     if (mIsDebug) {
                         Log.d(TAG, "isExceedMaxEditNum--->>超过最大值");
                     }
                     if (mIsDebug) {
                         Log.d(TAG, "isExceedMaxEditNum--->>" + ((long) mMaxNum));
                     }
-                    String nowMaxStr = formatDouble(mMaxNum, mDot);
+                    String nowMaxStr = getDoubleDecimalFormat(mMaxNum + "", mDot, mIsShowEnd0);
                     removeTextChangedListener(this);
                     setText(nowMaxStr);
                     addTextChangedListener(this);
@@ -379,17 +330,8 @@ public class MaxEditTextView extends AppCompatEditText {
                 }
 
                 //数据都没问题走
-                if (ss.startsWith(".")) {
-                    if (mIsDebug) {
-                        Log.d(TAG, "返回数据--->0." + ss);
-                    }
-                    mICall.call("0" + ss);
-                } else {
-                    if (mIsDebug) {
-                        Log.d(TAG, "返回数据--->" + ss);
-                    }
-                    mICall.call(ss);
-                }
+                //设置回调数据
+                setCallbackData(ss);
             }
 
             @Override
@@ -400,37 +342,40 @@ public class MaxEditTextView extends AppCompatEditText {
     }
 
     /**
+     * 设置回调数据
+     */
+    private void setCallbackData(String ss) {
+        String newSS = getDoubleDecimalFormat(ss, mDot, mIsShowEnd0);
+        if (mIsDebug) {
+            Log.d(TAG, "返回数据--->" + newSS);
+        }
+        mICall.call(newSS);
+    }
+
+    /**
      * 判断斤两菜当前值是否超过设置的最大值
      *
      * @param currentPrice 当前值
      * @param maxNum       设置的最大值
      */
-    private boolean isExceedMaxEditNum(TextWatcher textWatcher, double currentPrice, double maxNum) {
+    private boolean isExceedMaxEditNum(double currentPrice, double maxNum) {
 //        boolean isDot = mDot != 0;//是否是小数
 //        Log.d(TAG, "isExceedMaxEditNum: mMaxNum=" + mMaxNum);
 //        Log.d(TAG, "isExceedMaxEditNum: (long) mMaxNum=" + ((long) mMaxNum));
-        if (currentPrice > maxNum) {
-//            removeTextChangedListener(textWatcher);
-//            String maxStr = formatDouble(maxNum);
-//            setText(maxStr);
-//            addTextChangedListener(textWatcher);
-//            setSelection(maxStr.length());
-            return true;
-        }
-        return false;
+        return currentPrice > maxNum;
     }
 
     /**
      * 获取格式化的小数
      */
-    private String getDoubleDecimalFormat(String numberStr, int dot) {
+    private String getDoubleDecimalFormat(String numberStr, int dot, boolean isShowEnd0) {
         if (numberStr.equals(".")) {
             numberStr = "0.0";
         }
         double number = 0;
         try {
             if (!numberStr.isEmpty()) {
-                number = Double.valueOf(numberStr);
+                number = Double.parseDouble(numberStr);
             }
         } catch (NumberFormatException e) {
             if (mIsDebug) {
@@ -438,19 +383,23 @@ public class MaxEditTextView extends AppCompatEditText {
             }
         }
 
-        return formatDouble(number, dot);
+        return formatDouble(number, dot, isShowEnd0);
     }
 
     /**
      * 格式化小数
      */
-    private String formatDouble(double number, int dot) {
-        StringBuilder patternSb = new StringBuilder("#");
+    private String formatDouble(double number, int dot, boolean isShowEnd0) {
+        StringBuilder patternSb = new StringBuilder("0");
         for (int i = 0; i < dot; i++) {
             if (i == 0) {
                 patternSb.append(".");
             }
-            patternSb.append("#");
+            if (isShowEnd0) {
+                patternSb.append("0");
+            } else {
+                patternSb.append("#");
+            }
         }
         DecimalFormat format = new DecimalFormat(patternSb.toString());
         return format.format(number);
