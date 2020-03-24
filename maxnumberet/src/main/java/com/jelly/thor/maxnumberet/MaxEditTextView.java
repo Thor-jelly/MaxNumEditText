@@ -12,6 +12,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -402,6 +403,7 @@ public class MaxEditTextView extends AppCompatEditText {
             }
         }
         DecimalFormat format = new DecimalFormat(patternSb.toString());
+        format.setRoundingMode(RoundingMode.FLOOR);
         return format.format(number);
     }
 }
