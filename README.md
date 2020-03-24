@@ -7,7 +7,12 @@
      /**
       * 设置是否显示日志
       */
-     public void setDebug(boolean isDebug) 
+     public void setDebug(boolean isDebug)
+
+      /**
+       * 设置是否显示小数后的0
+       */
+      public void setShowEnd0(boolean showEnd0)
      
      /**
       * 设置最大数值，并返回数值,如果最大值为整数则不可以输小数
