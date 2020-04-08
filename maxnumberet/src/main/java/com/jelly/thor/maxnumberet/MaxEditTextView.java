@@ -210,6 +210,10 @@ public class MaxEditTextView extends AppCompatEditText {
                 if (ss.matches("^[-]*((0+\\d+)|(0\\d\\.\\d*))$")) {
                     removeTextChangedListener(this);
                     String newSS = getDoubleDecimalFormat(ss, mDot, false);
+                    //判断输入的newSS是否超过最大值如果超过设置为最大值
+                    if (isExceedMaxEditNum(Double.parseDouble(newSS), mMaxNum)) {//判断是否超过最大值
+                        newSS = getDoubleDecimalFormat(mMaxNum + "", mDot, mIsShowEnd0);
+                    }
                     oldNumSb.setLength(0);
                     oldNumSb.append(newSS);
                     setText(newSS);
@@ -303,17 +307,9 @@ public class MaxEditTextView extends AppCompatEditText {
                         }
                     }
                 }
-                double jinPrice = 0D;
-                try {
-                    if (!ss.equals("")) {
-                        jinPrice = Double.parseDouble(ss);
-                    }
-                } catch (NumberFormatException e) {
-                    if (mIsDebug) {
-                        Log.w(TAG, e.getMessage());
-                    }
-                }
-                if (isExceedMaxEditNum(jinPrice, mMaxNum)) {//判断是否超过最大值
+
+                String newS = getDoubleDecimalFormat(ss, mDot, false);
+                if (isExceedMaxEditNum(Double.parseDouble(newS), mMaxNum)) {//判断是否超过最大值
                     if (mIsDebug) {
                         Log.d(TAG, "isExceedMaxEditNum--->>超过最大值");
                     }
