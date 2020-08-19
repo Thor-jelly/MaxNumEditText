@@ -131,15 +131,23 @@ public class MaxEditTextView extends AppCompatEditText {
             return;
         }
         String nowTextStr = text.toString();
-        setText(nowTextStr);
         double nowD;
         try {
             nowD = Double.parseDouble(nowTextStr);
         } catch (NumberFormatException e) {
             nowD = 0;
         }
-        if (nowD <= maxNum) {
-            setSelection(getText().toString().length());
+        if (mIsHasAllTextWatch) {
+            setText(nowTextStr);
+        } else {
+            if (nowD > mMaxNum) {
+                String nowMaxStr = getDoubleDecimalFormat(mMaxNum + "", mDot, mIsShowEnd0);
+                setText(nowMaxStr);
+                if (isFocused()) {
+                    setSelection(getText().toString().length());
+                }
+                mICall.call(nowMaxStr);
+            }
         }
     }
 
