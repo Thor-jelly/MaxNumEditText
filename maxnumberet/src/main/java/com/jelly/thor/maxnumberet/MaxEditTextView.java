@@ -62,6 +62,10 @@ public class MaxEditTextView extends AppCompatEditText {
         void call(String s);
     }
 
+    public interface IExceedMaxEditNumCall extends ICall {
+        void isExceedMaxEditNum();
+    }
+
     private ICall mICall;
 
     public interface FocusChangeListenerCallback {
@@ -367,7 +371,11 @@ public class MaxEditTextView extends AppCompatEditText {
 //        boolean isDot = mDot != 0;//是否是小数
 //        Log.d(TAG, "isExceedMaxEditNum: mMaxNum=" + mMaxNum);
 //        Log.d(TAG, "isExceedMaxEditNum: (long) mMaxNum=" + ((long) mMaxNum));
-        return currentPrice > maxNum;
+        boolean isExceedMaxEditNum = currentPrice > maxNum;
+        if (isExceedMaxEditNum && mICall != null && mICall instanceof IExceedMaxEditNumCall) {
+            ((IExceedMaxEditNumCall) mICall).isExceedMaxEditNum();
+        }
+        return isExceedMaxEditNum;
     }
 
     /**
